@@ -1,7 +1,5 @@
 package model
 
-import "github.com/jamesfzhang/ynab/util"
-
 // https://api.youneedabudget.com/v1#/Accounts
 type AccountResponse struct {
   Data AccountWrapper `json:"data"`
@@ -29,7 +27,7 @@ type Account struct {
 }
 
 func (account Account) FormattedBalance(format CurrencyFormat) string {
-  return util.FormatAmount(account.Balance, format.CurrencySymbol)
+  return format.Render(account.Balance)
 }
 
 // FilterActive filters out any closed or deleted accounts.

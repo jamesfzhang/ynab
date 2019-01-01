@@ -2,6 +2,8 @@ package model
 
 import (
   "fmt"
+  "github.com/leekchan/accounting"
+  "math/big"
   "net/http"
 )
 
@@ -20,6 +22,19 @@ type CurrencyFormat struct {
   CurrencySymbol string `json:"currency_symbol"`
   DisplaySymbol  bool   `json:"display_symbol"`
   SymbolFirst    bool   `json:"symbol_first"`
+}
+
+// Render returns a string formatted currency amount.
+// https://api.youneedabudget.com/#formats
+func (format CurrencyFormat) Render(amount int64) string {
+  acc := accounting.Accounting{
+    Symbol:    format.CurrencySymbol,
+    Precision: 2,
+    Decimal:   format.DecimalSeparator,
+    Thousand:  format.GroupSeparator,
+  }
+  rat := big.NewRat(amount, 1000)
+  return acc.FormatMoneyBigRat(rat)
 }
 
 type ApiError struct {

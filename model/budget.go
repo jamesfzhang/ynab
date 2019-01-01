@@ -1,7 +1,5 @@
 package model
 
-import "github.com/jamesfzhang/ynab/util"
-
 // https://api.youneedabudget.com/v1#/Budgets
 type BudgetSummaryResponse struct {
   Data BudgetSummaryWrapper `json:"data"`
@@ -67,5 +65,5 @@ func (budget Budget) NetWorth() int64 {
 }
 
 func (budget Budget) FormattedNetWorth() string {
-  return util.FormatAmount(budget.NetWorth(), budget.CurrencyFormat.CurrencySymbol)
+  return budget.CurrencyFormat.Render(budget.NetWorth())
 }
