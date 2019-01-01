@@ -1,5 +1,7 @@
 package model
 
+import "sort"
+
 // https://api.youneedabudget.com/v1#/Accounts
 type AccountResponse struct {
   Data AccountWrapper `json:"data"`
@@ -30,12 +32,21 @@ func (account Account) FormattedBalance(format CurrencyFormat) string {
   return format.Render(account.Balance)
 }
 
-// FilterActive filters out any closed or deleted accounts.
+// Sorting
+type ByBalance []Account
+
+func (a ByBalance) Len() int           { return len(a) }
+func (a ByBalance) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByBalance) Less(i, j int) bool { return a[i].Balance > a[j].Balance }
+
+// FilterActive filters out any closed or deleted accounts, and sorts by
+// balance in descending order.
 func FilterActive(accounts []Account) (result []Account) {
   for _, account := range accounts {
     if !account.Closed && !account.Deleted {
       result = append(result, account)
     }
   }
+  sort.Sort(ByBalance(result))
   return
 }
