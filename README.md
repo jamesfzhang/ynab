@@ -43,7 +43,7 @@ for _, b := range budgets {
     continue
   }
 
-  // Print budget & networth
+  // Print budget & net worth
   fmt.Printf("Budget: %v, Net Worth: %v\n\n", budget.Name, budget.FormattedNetWorth())
 
   for _, a := range budget.ActiveAccounts() {

@@ -65,6 +65,7 @@ func (budget Budget) NetWorth() int64 {
   }
   return sum
 }
+
 func (budget Budget) FormattedNetWorth() string {
   return util.FormatAmount(budget.NetWorth(), budget.CurrencyFormat.CurrencySymbol)
 }
