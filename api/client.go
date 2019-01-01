@@ -5,10 +5,14 @@ import (
 	"github.com/jamesfzhang/ynab/model"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+	"strings"
+	"sync"
 )
 
 const (
 	API_BASE_URL = "https://api.youneedabudget.com/v1"
+	H_RATE_LIMIT = "X-Rate-Limit"
 )
 
 type ApiService struct {
@@ -25,6 +29,10 @@ type Client struct {
 
 	// Internal HTTP client
 	httpClient *http.Client
+
+	// Utils
+	RemainingRequestsCount      int
+	remainingRequestsCountMutex sync.Mutex
 
 	// API services
 	AccountService *AccountService
@@ -71,6 +79,13 @@ func (client Client) get(
 	// Close body after returning
 	defer resp.Body.Close()
 
+	// Parse rate limit from response header
+	remaining, err := client.parseRateLimit(&resp.Header)
+	if err != nil {
+		return
+	}
+	client.RemainingRequestsCount = remaining
+
 	// Check error
 	err = client.validateResponse(resp)
 	if err != nil {
@@ -89,6 +104,32 @@ func (client Client) get(
 		return
 	}
 
+	return
+}
+
+// parseRateLimit reads the response headers and saves number of requests
+// remaining before rate limiting starts.
+func (client Client) parseRateLimit(header *http.Header) (remaining int, err error) {
+
+	client.remainingRequestsCountMutex.Lock()
+	defer client.remainingRequestsCountMutex.Unlock()
+
+	// Rate limit is formatted like X/200 meaning X requests have already been
+	// made out of 200 requests allowed. The limit resets hourly.
+	val := header.Get(http.CanonicalHeaderKey(H_RATE_LIMIT))
+	limits := strings.Split(val, "/")
+
+	reqCount, err := strconv.Atoi(limits[0])
+	if err != nil {
+		return
+	}
+
+	totalCount, err := strconv.Atoi(limits[1])
+	if err != nil {
+		return
+	}
+
+	remaining = totalCount - reqCount
 	return
 }
 
