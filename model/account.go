@@ -1,5 +1,7 @@
 package model
 
+import "github.com/jamesfzhang/ynab/util"
+
 // https://api.youneedabudget.com/v1#/Accounts
 type AccountResponse struct {
   Data AccountWrapper `json:"data"`
@@ -17,11 +19,25 @@ type Account struct {
   Note            string `json:"note"`
   TransferPayeeId string `json:"transfer_payee_id"`
 
-  Balance          int `json:"balance"`
-  ClearedBalance   int `json:"cleared_balance"`
-  UnclearedBalance int `json:"uncleared_balance"`
+  Balance          int64 `json:"balance"`
+  ClearedBalance   int64 `json:"cleared_balance"`
+  UnclearedBalance int64 `json:"uncleared_balance"`
 
   OnBudget bool `json:"on_budget"`
   Closed   bool `json:"closed"`
   Deleted  bool `json:"deleted"`
+}
+
+func (account Account) FormattedBalance(format CurrencyFormat) string {
+  return util.FormatAmount(account.Balance, format.CurrencySymbol)
+}
+
+// FilterActive filters out any closed or deleted accounts.
+func FilterActive(accounts []Account) (result []Account) {
+  for _, account := range accounts {
+    if !account.Closed && !account.Deleted {
+      result = append(result, account)
+    }
+  }
+  return
 }

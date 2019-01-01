@@ -2,7 +2,7 @@ package api
 
 import "github.com/jamesfzhang/ynab/model"
 
-// List accounts for specified budget.
+// List active (not closed or deleted) accounts for specified budget.
 // https://api.youneedabudget.com/v1#/Accounts/getAccounts
 func (service *AccountService) List(budgetId string) (accounts []model.Account, err error) {
 
@@ -12,16 +12,19 @@ func (service *AccountService) List(budgetId string) (accounts []model.Account, 
     return
   }
 
-  accounts = result.Data.Accounts
+  accounts = model.FilterActive(result.Data.Accounts)
   return
 }
 
 // Get specified account.
 // https://api.youneedabudget.com/v1#/Accounts/getAccountById
-func (service *AccountService) Get(budgetId string, id string) (account model.Account, err error) {
+func (service *AccountService) Get(
+  budgetId string,
+  accountId string,
+) (account model.Account, err error) {
 
   var result model.AccountResponse
-  err = service.Client.get("/budgets/"+budgetId+"/accounts/"+id, &result)
+  err = service.Client.get("/budgets/"+budgetId+"/accounts/"+accountId, &result)
   if err != nil {
     return
   }

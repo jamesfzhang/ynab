@@ -1,5 +1,7 @@
 package model
 
+import "github.com/jamesfzhang/ynab/util"
+
 // https://api.youneedabudget.com/v1#/Budgets
 type BudgetSummaryResponse struct {
   Data BudgetSummaryWrapper `json:"data"`
@@ -48,4 +50,21 @@ type BudgetSettingsWrapper struct {
 type BudgetSettings struct {
   DateFormat     DateFormat     `json:"date_format"`
   CurrencyFormat CurrencyFormat `json:"currency_format"`
+}
+
+// ActiveAccounts returns the budget's active (not closed or deleted) accounts.
+func (budget Budget) ActiveAccounts() []Account {
+  return FilterActive(budget.Accounts)
+}
+
+// NetWorth returns the net worth of the budget (sum of balances across active accounts).
+func (budget Budget) NetWorth() int64 {
+  var sum int64
+  for _, account := range budget.ActiveAccounts() {
+    sum += account.Balance
+  }
+  return sum
+}
+func (budget Budget) FormattedNetWorth() string {
+  return util.FormatAmount(budget.NetWorth(), budget.CurrencyFormat.CurrencySymbol)
 }

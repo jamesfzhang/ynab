@@ -2,7 +2,7 @@ package api
 
 import "github.com/jamesfzhang/ynab/model"
 
-// List budgets summaries.
+// List budget summaries.
 // https://api.youneedabudget.com/v1#/Budgets/getBudgets
 func (service *BudgetService) List() (budgets []model.BudgetSummary, err error) {
 

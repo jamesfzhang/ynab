@@ -119,6 +119,10 @@ func (client Client) parseRateLimit(header *http.Header) (remaining int, err err
 	val := header.Get(http.CanonicalHeaderKey(H_RATE_LIMIT))
 	limits := strings.Split(val, "/")
 
+	if len(limits) != 2 {
+		return
+	}
+
 	reqCount, err := strconv.Atoi(limits[0])
 	if err != nil {
 		return

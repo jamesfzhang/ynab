@@ -36,12 +36,19 @@ if err != nil {
   return
 }
 
-for _, budget := range budgets {
+for _, b := range budgets {
   // Get budget details
-  budget, err := client.BudgetService.Get(budget.Id)
+  budget, err := client.BudgetService.Get(b.Id)
   if err != nil {
     continue
   }
-  fmt.Printf("%+v", budget)
+
+  // Print budget & networth
+  fmt.Printf("Budget: %v, Net Worth: %v\n\n", budget.Name, budget.FormattedNetWorth())
+
+  for _, a := range budget.ActiveAccounts() {
+    // Print balance of each account
+    fmt.Printf("  %v: %v\n", a.Name, a.FormattedBalance(budget.CurrencyFormat))
+  }
 }
 ```
