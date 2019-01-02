@@ -28,7 +28,7 @@ type Account struct {
   Deleted  bool `json:"deleted"`
 }
 
-func (account Account) FormattedBalance(format CurrencyFormat) string {
+func (account *Account) FormattedBalance(format *CurrencyFormat) string {
   return format.Render(account.Balance)
 }
 
@@ -41,8 +41,8 @@ func (a ByBalance) Less(i, j int) bool { return a[i].Balance > a[j].Balance }
 
 // FilterActive filters out any closed or deleted accounts, and sorts by
 // balance in descending order.
-func FilterActive(accounts []Account) (result []Account) {
-  for _, account := range accounts {
+func FilterActive(accounts *[]Account) (result []Account) {
+  for _, account := range *accounts {
     if !account.Closed && !account.Deleted {
       result = append(result, account)
     }

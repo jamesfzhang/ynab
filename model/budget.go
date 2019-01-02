@@ -51,12 +51,12 @@ type BudgetSettings struct {
 }
 
 // ActiveAccounts returns the budget's active (not closed or deleted) accounts.
-func (budget Budget) ActiveAccounts() []Account {
-  return FilterActive(budget.Accounts)
+func (budget *Budget) ActiveAccounts() []Account {
+  return FilterActive(&budget.Accounts)
 }
 
 // NetWorth returns the net worth of the budget (sum of balances across active accounts).
-func (budget Budget) NetWorth() int64 {
+func (budget *Budget) NetWorth() int64 {
   var sum int64
   for _, account := range budget.ActiveAccounts() {
     sum += account.Balance
@@ -64,6 +64,6 @@ func (budget Budget) NetWorth() int64 {
   return sum
 }
 
-func (budget Budget) FormattedNetWorth() string {
+func (budget *Budget) FormattedNetWorth() string {
   return budget.CurrencyFormat.Render(budget.NetWorth())
 }

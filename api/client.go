@@ -15,14 +15,6 @@ const (
   H_RATE_LIMIT = "X-Rate-Limit"
 )
 
-type ApiService struct {
-  Client *Client
-}
-
-type AccountService ApiService
-type BudgetService ApiService
-type UserService ApiService
-
 type Client struct {
   baseURL     string
   accessToken string
@@ -40,6 +32,14 @@ type Client struct {
   UserService    *UserService
 }
 
+type ApiService struct {
+  Client *Client
+}
+
+type AccountService ApiService
+type BudgetService ApiService
+type UserService ApiService
+
 // NewClient returns an API client using the specified access token.
 func NewClient(accessToken string) *Client {
   client := &Client{
@@ -55,7 +55,7 @@ func NewClient(accessToken string) *Client {
   return client
 }
 
-func (client Client) get(
+func (client *Client) get(
   path string,
   result interface{},
 ) (err error) {
@@ -109,7 +109,7 @@ func (client Client) get(
 
 // parseRateLimit reads the response headers and saves number of requests
 // remaining before rate limiting starts.
-func (client Client) parseRateLimit(header *http.Header) (remaining int, err error) {
+func (client *Client) parseRateLimit(header *http.Header) (remaining int, err error) {
 
   client.remainingRequestsCountMutex.Lock()
   defer client.remainingRequestsCountMutex.Unlock()
@@ -139,7 +139,7 @@ func (client Client) parseRateLimit(header *http.Header) (remaining int, err err
 
 // validateResponse checks that the response has status code 2xx.
 // Otherwise, it parses the API error from the response body.
-func (client Client) validateResponse(resp *http.Response) error {
+func (client *Client) validateResponse(resp *http.Response) error {
   status := resp.StatusCode
   if status >= 200 && status <= 299 {
     return nil

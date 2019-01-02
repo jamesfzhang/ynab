@@ -26,7 +26,7 @@ type CurrencyFormat struct {
 
 // Render returns a string formatted currency amount.
 // https://api.youneedabudget.com/#formats
-func (format CurrencyFormat) Render(amount int64) string {
+func (format *CurrencyFormat) Render(amount int64) string {
   acc := accounting.Accounting{
     Symbol:    format.CurrencySymbol,
     Precision: 2,
@@ -42,7 +42,7 @@ type ApiError struct {
   Detail   ErrorDetail `json:"error"`
 }
 
-func (err ApiError) Error() string {
+func (err *ApiError) Error() string {
   return fmt.Sprintf("Error (status %v)\n%v\n%+v",
     err.Response.StatusCode,
     err.Response.Request.URL,

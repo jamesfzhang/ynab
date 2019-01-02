@@ -12,7 +12,7 @@ func (service *AccountService) List(budgetId string) (accounts []model.Account, 
     return
   }
 
-  accounts = model.FilterActive(result.Data.Accounts)
+  accounts = model.FilterActive(&result.Data.Accounts)
   return
 }
 
