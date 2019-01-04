@@ -20,8 +20,8 @@ import "github.com/jamesfzhang/ynab"
 package main
 
 import (
-  "fmt"
-  "github.com/jamesfzhang/ynab"
+	"fmt"
+	"github.com/jamesfzhang/ynab"
 )
 
 // To use this client, create an access token for your YNAB account.
@@ -33,22 +33,23 @@ client := ynab.NewClient(token)
 // List budget summaries
 budgets, err := client.BudgetService.List()
 if err != nil {
-  return
+	fmt.Println(err)
+	return
 }
 
 for _, b := range budgets {
-  // Get budget details
-  budget, err := client.BudgetService.Get(b.Id)
-  if err != nil {
-    continue
-  }
+	// Get budget details
+	budget, err := client.BudgetService.Get(b.Id)
+	if err != nil {
+		continue
+	}
 
-  // Print budget & net worth
-  fmt.Printf("Budget: %v, Net Worth: %v\n\n", budget.Name, budget.FormattedNetWorth())
+	// Print budget & net worth
+	fmt.Printf("Budget: %v, Net Worth: %v\n\n", budget.Name, budget.FormattedNetWorth())
 
-  for _, a := range budget.ActiveAccounts() {
-    // Print balance of each account
-    fmt.Printf("  %v: %v\n", a.Name, a.FormattedBalance(budget.CurrencyFormat))
-  }
+	for _, a := range budget.ActiveAccounts() {
+		// Print balance of each account
+		fmt.Printf("  %v: %v\n", a.Name, a.FormattedBalance(&budget.CurrencyFormat))
+	}
 }
 ```

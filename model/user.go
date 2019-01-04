@@ -2,13 +2,13 @@ package model
 
 // https://api.youneedabudget.com/v1#/User
 type UserResponse struct {
-  Data UserWrapper `json:"data"`
+	Data UserWrapper `json:"data"`
 }
 
 type UserWrapper struct {
-  User User `json:"user"`
+	User User `json:"user"`
 }
 
 type User struct {
-  Id string `json:"id"`
+	Id string `json:"id"`
 }

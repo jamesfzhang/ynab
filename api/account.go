@@ -6,29 +6,29 @@ import "github.com/jamesfzhang/ynab/model"
 // https://api.youneedabudget.com/v1#/Accounts/getAccounts
 func (service *AccountService) List(budgetId string) (accounts []model.Account, err error) {
 
-  var result model.AccountResponse
-  err = service.Client.get("/budgets/"+budgetId+"/accounts", &result)
-  if err != nil {
-    return
-  }
+	var result model.AccountsResponse
+	err = service.Client.get("/budgets/"+budgetId+"/accounts", &result)
+	if err != nil {
+		return
+	}
 
-  accounts = model.FilterActive(&result.Data.Accounts)
-  return
+	accounts = model.FilterActive(&result.Data.Accounts)
+	return
 }
 
 // Get specified account.
 // https://api.youneedabudget.com/v1#/Accounts/getAccountById
 func (service *AccountService) Get(
-  budgetId string,
-  accountId string,
+	budgetId string,
+	accountId string,
 ) (account model.Account, err error) {
 
-  var result model.AccountResponse
-  err = service.Client.get("/budgets/"+budgetId+"/accounts/"+accountId, &result)
-  if err != nil {
-    return
-  }
+	var result model.AccountResponse
+	err = service.Client.get("/budgets/"+budgetId+"/accounts/"+accountId, &result)
+	if err != nil {
+		return
+	}
 
-  account = result.Data.Account
-  return
+	account = result.Data.Account
+	return
 }
